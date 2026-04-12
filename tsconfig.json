@@ -1,13 +1,17 @@
 {
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
+    // Deprecation handling
+    "ignoreDeprecations": "6.0",
+
     // File Layout
-    // "rootDir": "./src",
+    "rootDir": "./apps",
     // "outDir": "./dist",
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "NodeNext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "target": "esnext",
     "types": [],
     // For nodejs:
@@ -35,13 +39,11 @@
     // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
-    "verbatimModuleSyntax": false,
+    "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "moduleResolution": "nodenext",
-    "extends": "../../packages/config/tsconfig.base.json"
-  }
+    "skipLibCheck": true
+  },
+  "extends": "./packages/config/tsconfig.base.json"
 }

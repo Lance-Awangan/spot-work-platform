@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from 'react-native';
 
 export default function ShiftsScreen() {
   return (
@@ -11,7 +11,6 @@ export default function ShiftsScreen() {
         <Text>6PM - 10PM</Text>
         <Text>₱120/hour</Text>
       </View>
-
     </View>
   );
 }
@@ -23,11 +22,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 20,
   },
   card: {
-    backgroundColor: "#eee",
+    backgroundColor: '#eee',
     padding: 16,
     borderRadius: 10,
   },
