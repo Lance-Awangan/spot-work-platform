@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "scripts": {
     "lint": "eslint . --ignore-pattern \"apps/worker-mobile/**\"",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
