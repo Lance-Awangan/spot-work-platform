@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  WORKER
+  BUSINESS
+  ADMIN
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+  CANCELLED
+}
+
+enum ApplicationStatus {
+  APPLIED
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum ShiftStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+model User {
+  id           String   @id @default(uuid())
+  firstName    String
+  lastName     String
+  email        String   @unique
+  phone        String?
+  passwordHash String
+  role         UserRole
+  isVerified   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  workerProfile   WorkerProfile?
+  businessProfile BusinessProfile?
+
+  applications   Application[]
+  workershifts   Shift[]       @relation("ShiftWorker")
+  businessShifts Shift[]       @relation("ShiftBusiness")
+  postedJobs     Job[]         @relation("BusinessJobs")
+}
+
+model WorkerProfile {
+  id                   String  @id @default(uuid())
+  userId               String  @unique
+  skills               String?
+  experienceSummary    String?
+  ratingAverage        Float   @default(0)
+  completedShiftsCount Int     @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BusinessProfile {
+  id            String  @id @default(uuid())
+  userId        String  @unique
+  businessName  String
+  industry      String?
+  address       String?
+  contactPerson String?
+  ratingAverage Float   @default(0)
+  isVerified    Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Job {
+  id          String    @id @default(uuid())
+  businessId  String
+  title       String
+  description String
+  location    String
+  payRate     Float
+  payType     String
+  startTime   DateTime
+  endTime     DateTime
+  slots       Int
+  status      JobStatus @default(OPEN)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  business     User          @relation("BusinessJobs", fields: [businessId], references: [id], onDelete: Cascade)
+  applications Application[]
+  shifts       Shift[]
+}
+
+model Application {
+  id         String            @id @default(uuid())
+  jobId      String
+  workerId   String
+  status     ApplicationStatus @default(APPLIED)
+  appliedAt  DateTime          @default(now())
+  reviewedAt DateTime?
+
+  job    Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  worker User @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  shift Shift?
+
+  @@unique([jobId, workerId])
+}
+
+model Shift {
+  id             String      @id @default(uuid())
+  jobId          String
+  businessId     String
+  workerId       String
+  applicationId  String      @unique
+  status         ShiftStatus @default(SCHEDULED)
+  scheduledStart DateTime
+  scheduledEnd   DateTime
+  actualStart    DateTime?
+  actualEnd      DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  job         Job         @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  business    User        @relation("ShiftBusiness", fields: [businessId], references: [id], onDelete: Cascade)
+  worker      User        @relation("ShiftWorker", fields: [workerId], references: [id], onDelete: Cascade)
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+}
