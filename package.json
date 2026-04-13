@@ -2,6 +2,7 @@
   "name": "spot-work-platform",
   "private": true,
   "version": "0.1.0",
+  "type": "module",
   "scripts": {
     "lint": "eslint . --ignore-pattern \"apps/worker-mobile/**\"",
     "format": "prettier --write .",
