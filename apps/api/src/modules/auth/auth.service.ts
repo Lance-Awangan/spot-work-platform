@@ -2,6 +2,7 @@ import { prisma } from '../../common/prisma/client.js';
 import { comparePassword, hashPassword } from '../../common/utils/hash.js';
 import { signAuthToken } from '../../common/utils/jwt.js';
 import type { LoginInput, RegisterInput } from './auth.schema.js';
+import { Prisma } from '@prisma/client';
 
 export class AuthService {
   static async register(input: RegisterInput) {
@@ -20,14 +21,31 @@ export class AuthService {
 
     const passwordHash = await hashPassword(input.password);
 
-    const userData: any = {
-      firstName: input.firstName,
-      lastName: input.lastName,
-      email: input.email,
-      phone: input.phone,
-      passwordHash,
-      role: input.role,
-    };
+    const userData: Prisma.UserCreateInput = {
+  firstName: input.firstName,
+  lastName: input.lastName,
+  email: input.email,
+  passwordHash,
+  role: input.role,
+};
+
+if (input.phone) {
+  userData.phone = input.phone;
+}
+
+if (input.role === 'WORKER') {
+  userData.workerProfile = {
+    create: {},
+  };
+}
+
+if (input.role === 'BUSINESS') {
+  userData.businessProfile = {
+    create: {
+      businessName: input.businessName || `${input.firstName}'s Business`,
+    },
+  };
+}
 
     if (input.role === 'WORKER') {
       userData.workerProfile = {
