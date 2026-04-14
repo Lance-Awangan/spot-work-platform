@@ -9,28 +9,37 @@ datasource db {
 enum UserRole {
   WORKER
   BUSINESS
-  ADMIN
 }
 
 enum JobStatus {
   OPEN
   CLOSED
-  CANCELLED
 }
 
-enum ApplicationStatus {
-  APPLIED
+enum MatchStatus {
   ACCEPTED
   REJECTED
-  WITHDRAWN
 }
 
-enum ShiftStatus {
-  SCHEDULED
+enum WorkStatus {
+  PENDING
   IN_PROGRESS
   COMPLETED
-  CANCELLED
-  NO_SHOW
+}
+
+enum AttendanceMethod {
+  QR
+  MANUAL
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+}
+
+enum FeeStatus {
+  PENDING
+  PAID
 }
 
 model User {
@@ -38,7 +47,7 @@ model User {
   firstName    String
   lastName     String
   email        String   @unique
-  phone        String?
+  phone        String?  @unique
   passwordHash String
   role         UserRole
   isVerified   Boolean  @default(false)
@@ -48,10 +57,8 @@ model User {
   workerProfile   WorkerProfile?
   businessProfile BusinessProfile?
 
-  applications   Application[]
-  workershifts   Shift[]       @relation("ShiftWorker")
-  businessShifts Shift[]       @relation("ShiftBusiness")
-  postedJobs     Job[]         @relation("BusinessJobs")
+  postedJobs Job[]   @relation("BusinessJobs")
+  matches    Match[] @relation("WorkerMatches")
 }
 
 model WorkerProfile {
@@ -79,57 +86,74 @@ model BusinessProfile {
 }
 
 model Job {
-  id          String    @id @default(uuid())
-  businessId  String
-  title       String
-  description String
-  location    String
-  payRate     Float
-  payType     String
-  startTime   DateTime
-  endTime     DateTime
-  slots       Int
-  status      JobStatus @default(OPEN)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id           String    @id @default(uuid())
+  businessId   String
+  title        String
+  description  String?
+  location     String
+  date         DateTime
+  startTime    DateTime
+  endTime      DateTime
+  payAmount    Float
+  totalSlots   Int
+  slotsFilled  Int       @default(0)
+  minRating    Float?
+  requirements Json?
+  restrictions Json?
+  status       JobStatus @default(OPEN)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  business     User          @relation("BusinessJobs", fields: [businessId], references: [id], onDelete: Cascade)
-  applications Application[]
-  shifts       Shift[]
+  business User    @relation("BusinessJobs", fields: [businessId], references: [id], onDelete: Cascade)
+  matches  Match[]
 }
 
-model Application {
-  id         String            @id @default(uuid())
-  jobId      String
-  workerId   String
-  status     ApplicationStatus @default(APPLIED)
-  appliedAt  DateTime          @default(now())
-  reviewedAt DateTime?
+model Match {
+  id                 String      @id @default(uuid())
+  workerId           String
+  jobId              String
+  status             MatchStatus
+  workStatus         WorkStatus  @default(PENDING)
+  agreementTimestamp DateTime    @default(now())
+  createdAt          DateTime    @default(now())
 
+  worker User @relation("WorkerMatches", fields: [workerId], references: [id], onDelete: Cascade)
   job    Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  worker User @relation(fields: [workerId], references: [id], onDelete: Cascade)
 
-  shift Shift?
+  attendance Attendance?
+  payment    Payment?
+  fee        Fee?
 
-  @@unique([jobId, workerId])
+  @@unique([workerId, jobId])
 }
 
-model Shift {
-  id             String      @id @default(uuid())
-  jobId          String
-  businessId     String
-  workerId       String
-  applicationId  String      @unique
-  status         ShiftStatus @default(SCHEDULED)
-  scheduledStart DateTime
-  scheduledEnd   DateTime
-  actualStart    DateTime?
-  actualEnd      DateTime?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+model Attendance {
+  id           String           @id @default(uuid())
+  matchId      String           @unique
+  checkInTime  DateTime?
+  checkOutTime DateTime?
+  method       AttendanceMethod
+  isCompleted  Boolean          @default(false)
+  createdAt    DateTime         @default(now())
 
-  job         Job         @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  business    User        @relation("ShiftBusiness", fields: [businessId], references: [id], onDelete: Cascade)
-  worker      User        @relation("ShiftWorker", fields: [workerId], references: [id], onDelete: Cascade)
-  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  matchId       String        @unique
+  paymentStatus PaymentStatus @default(PENDING)
+  updatedAt     DateTime      @updatedAt
+
+  match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+}
+
+model Fee {
+  id        String    @id @default(uuid())
+  matchId   String    @unique
+  feeAmount Float
+  feeStatus FeeStatus @default(PENDING)
+  createdAt DateTime  @default(now())
+
+  match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
 }
