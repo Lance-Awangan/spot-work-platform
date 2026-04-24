@@ -1,5 +1,6 @@
 import express from 'express';
 import authRouter from './modules/auth/auth.routes.js';
+import jobsRouter from './modules/jobs/jobs.routes.js';
 
 
 const app = express();
@@ -11,5 +12,6 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.use('/api/auth', authRouter);
+app.use('/api/jobs', jobsRouter);
 
 export default app;
