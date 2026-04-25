@@ -47,20 +47,6 @@ if (input.role === 'BUSINESS') {
   };
 }
 
-    if (input.role === 'WORKER') {
-      userData.workerProfile = {
-        create: {},
-      };
-    }
-
-    if (input.role === 'BUSINESS') {
-      userData.businessProfile = {
-        create: {
-          businessName: input.businessName || `${input.firstName}'s Business`,
-        },
-      };
-    }
-
     const user = await prisma.user.create({
       data: userData,
     });
