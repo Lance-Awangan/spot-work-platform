@@ -2,6 +2,7 @@ import express from 'express';
 import authRouter from './modules/auth/auth.routes.js';
 import jobsRouter from './modules/jobs/jobs.routes.js';
 import applicationsRouter from './modules/applications/applications.routes.js';
+import shiftsRoutes from './modules/shifts/shifts.routes.js';
 
 
 const app = express();
@@ -15,5 +16,6 @@ app.get('/api/health', (_req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/jobs', jobsRouter);
 app.use('/api/apply', applicationsRouter);
+app.use('/shifts', shiftsRoutes);
 
 export default app;
