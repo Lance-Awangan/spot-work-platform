@@ -17,7 +17,7 @@ class JobDetailScreen extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () {
-                context.go('/job-listing');
+                context.go('/jobs');
               },
               child: const Text('Go back to Job Listing'),
             ),
