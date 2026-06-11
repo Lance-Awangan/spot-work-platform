@@ -76,7 +76,17 @@ class ApplicationStatusScreen extends StatelessWidget {
             },
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton(
+            onPressed: () {
+              context.go('/profile');
+            },
+            child: const Text('View Profile'),
+          ),
+        ),
+
+        const SizedBox(height: 12),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
