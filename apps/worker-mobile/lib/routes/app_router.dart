@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 
+import '../features/auth/presentation/register_screen.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/jobs/presentation/job_listing_screen.dart';
 import '../features/jobs/presentation/job_detail_screen.dart';
@@ -12,6 +13,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/login',
       builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterScreen(),
     ),
     GoRoute(
       path: '/jobs',

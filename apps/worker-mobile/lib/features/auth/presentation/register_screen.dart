@@ -1,40 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Create Account'),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'APP NAME',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
+              const SizedBox(height: 16),
+
+              const TextField(
+                decoration: InputDecoration(
+                  labelText: 'Full Name',
+                  border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'SHORT DESCRIPTION OF THE APP',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
+
+              const SizedBox(height: 16),
+
               const TextField(
                 decoration: InputDecoration(
                   labelText: 'Email',
                   border: OutlineInputBorder(),
                 ),
               ),
+
               const SizedBox(height: 16),
+
               const TextField(
                 obscureText: true,
                 decoration: InputDecoration(
@@ -42,18 +43,31 @@ class LoginScreen extends StatelessWidget {
                   border: OutlineInputBorder(),
                 ),
               ),
+
+              const SizedBox(height: 16),
+
+              const TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Confirm Password',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+
               const SizedBox(height: 24),
+
               ElevatedButton(
                 onPressed: () {
                   context.go('/jobs');
                 },
-                child: const Text('Login'),
+                child: const Text('Create Account'),
               ),
+
               TextButton(
                 onPressed: () {
-                  context.go('/register');
+                  context.go('/login');
                 },
-                child: const Text("Don't have an account? Register"),
+                child: const Text('Already have an account? Login'),
               ),
             ],
           ),
