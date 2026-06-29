@@ -3,6 +3,7 @@ import authRouter from './modules/auth/auth.routes.js';
 import jobsRouter from './modules/jobs/jobs.routes.js';
 import applicationsRouter from './modules/applications/applications.routes.js';
 import shiftsRoutes from './modules/shifts/shifts.routes.js';
+import attendanceRoutes from './modules/attendance/attendance.routes.js';
 
 
 const app = express();
@@ -15,7 +16,8 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/auth', authRouter);
 app.use('/api/jobs', jobsRouter);
-app.use('/api/apply', applicationsRouter);
-app.use('/shifts', shiftsRoutes);
+app.use('/api/applications', applicationsRouter);
+app.use('/api/shifts', shiftsRoutes);
+app.use('/api/attendance', attendanceRoutes);
 
 export default app;
